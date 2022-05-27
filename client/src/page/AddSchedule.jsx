@@ -42,12 +42,17 @@ const AddSchedule = () => {
   const [code, setCode] = useState("");
   const [addSchedule] = useMutation(ADDSCHEDULE_MUTATION)
   const [error, setError] = useState("")
-  const id = useLocation().state.id;
+  const id = useLocation().state;
+
+console.log(id)
 
 
   const summitCode = useCallback(
     async (event) => {
       console.log("test");
+      console.log("code : "+code)
+      console.log("id : "+id )
+
       event.preventDefault();
       try {
         const statusAddSchedule = await addSchedule({
