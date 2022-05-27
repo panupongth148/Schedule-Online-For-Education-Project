@@ -31,13 +31,16 @@ const Container = styled.div`
 `;
 
 const Homepage = () => {
+  const [scTemp, setScTemp] = useState(null);
   const [
     { data: data1 },
     { data: data2 },
   ] = QueryMultiple();
-
+  useEffect(() => {
+   setScTemp(data1)
+   console.log(scTemp)
+  }, [data1]);
   const navigate = useNavigate();
-
   return (
     <>
       {data1 && (
