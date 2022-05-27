@@ -11,6 +11,8 @@ import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
 import { FlexContainer } from "../components/Components";
 import "../assets/Styles.css";
 import person from "../assets/picture/person.png";
+import Cookies from "js-cookie";
+import { gql, useQuery } from "@apollo/client";
 
 const ButtonGroup = styled.div`
   .bn1, .bn2{
@@ -27,44 +29,54 @@ const Container = styled.div`
   }
 `;
 
+const Me = gql`
+  query {
+    me {
+      _id
+      name
+      username
+      email
+    }
+  }
+`;
+
 const Homepage = (props) => {
   const [schedule_list, set_schedule_list] = useState(null);
   const [user, setUser] = useState({ account_id: 0 });
+  const { data, error } = useQuery(Me);
   const navigate = useNavigate();
-  console.log(user);
 
-  async function getScheduleList() {
-    let response = await axios.get(`/getallsbyid/${user.account_id}`);
-    // console.log(response.data)
-    let scheduleList = response.data;
-    set_schedule_list(scheduleList);
-    console.log(schedule_list);
-  }
+  // async function getScheduleList() {
+  //   console.log("schedule");
+  // }
 
   async function getUserByToken() {
-    const token = localStorage.getItem("token");
-    console.log(token);
-    if (token) {
-      console.log(token);
-      let response = await axios.get(`getuserbytoken`, {
-        params: {
-          token: token,
-        },
-      });
-      const us = response.data[0];
-      console.log(us);
-      setUser(us);
-    }
+    // const token = Cookies.get("token");
+    // console.log(token);
+
+    console.log(data);
+    console.log(error);
+
+    // if (token) {
+    //   console.log(token);
+    //   let response = await axios.get(`getuserbytoken`, {
+    //     params: {
+    //       token: token,
+    //     },
+    //   });
+    //   const us = response.data[0];
+    //   console.log(us);
+    //   setUser(us);
+    // }
   }
 
-  useEffect(() => {
-    // Update the document title using the browser API
-    getScheduleList();
-  }, [user]);
+  // useEffect(() => {
+  //   // Update the document title using the browser API
+  //   getScheduleList();
+  // }, [user]);
 
   useEffect(() => {
     getUserByToken();
-    console.log(user);
   }, []);
 
   return (
