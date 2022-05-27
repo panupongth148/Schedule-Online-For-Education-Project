@@ -3,9 +3,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "../components/Footer";
 import { Link, useLocation } from "react-router-dom";
 import axios from "../plugins/axios";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import styled from "styled-components";
+import { gql, useQuery, useMutation } from '@apollo/client';
 
+const ADDSCHEDULE_MUTATION = gql`
+mutation($code: String!, $userId: String!){
+  addSchedule(code: $code, userId: $userid){
+    status
+    message
+  }
+}
+`
 const Background = styled.div`
   display: flex;
   background: #050a30;
@@ -31,25 +40,53 @@ const Container = styled.div`
 const AddSchedule = () => {
   const [subjects, setSubject] = useState(null);
   const [code, setCode] = useState("");
+  const [addSchedule] = useMutation(ADDSCHEDULE_MUTATION)
+  const [error, setError] = useState("")
+  const id = useLocation().state.id;
 
-  const summitCode = async () => {
-    let response = await axios.post(`/schedule/bycode`, {
-      code: code,
-      account_id: 3,
-    });
-    let subjectRes = response.data;
-    console.log(subjectRes);
-    let idSchedule = subjectRes[0].schedule_id;
-    let response2 = await axios.post("/addschedule", {
-      s_name: subjectRes[0].s_name,
-      account_id: 1,
-    });
 
-    let response3 = await axios.post("/schedule/subjectlist", {
-      subjects: subjectRes,
-      scheduleId: response2.data.sehedule_id,
-    });
-  };
+  const summitCode = useCallback(
+    async (event) => {
+      console.log("test");
+      event.preventDefault();
+      try {
+        const statusAddSchedule = await addSchedule({
+          variables: {
+            code: code,
+            userId: id
+          },
+        });
+        console.log(statusAddSchedule );
+       
+      } catch (error) {
+        console.log(error);
+        setError("cannot add schedule with this code");
+      }
+
+     setCode("")
+    },
+    [code, id, addSchedule]
+  );
+  // const summitCode = async () => {
+
+
+  //   // let response = await axios.post(`/schedule/bycode`, {
+  //   //   code: code,
+  //   //   account_id: 3,
+  //   // });
+  //   // let subjectRes = response.data;
+  //   // console.log(subjectRes);
+  //   // let idSchedule = subjectRes[0].schedule_id;
+  //   // let response2 = await axios.post("/addschedule", {
+  //   //   s_name: subjectRes[0].s_name,
+  //   //   account_id: 1,
+  //   // });
+
+  //   // let response3 = await axios.post("/schedule/subjectlist", {
+  //   //   subjects: subjectRes,
+  //   //   scheduleId: response2.data.sehedule_id,
+  //   // });
+  // };
   return (
     <>
       <Background>
