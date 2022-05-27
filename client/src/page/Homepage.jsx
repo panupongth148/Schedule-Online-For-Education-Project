@@ -13,7 +13,7 @@ import "../assets/Styles.css";
 import person from "../assets/picture/person.png";
 import Cookies from "js-cookie";
 import { gql, useQuery } from "@apollo/client";
-import QueryMultiple from "./Query";
+import QueryMultiple from "../components/Query";
 
 const ButtonGroup = styled.div`
   .bn1, .bn2{
@@ -48,7 +48,6 @@ const Homepage = () => {
   useEffect(() => {
     if (scTemp && user) {
       const list = scTemp.schedules.filter((sc) => sc.userId === user.me._id);
-      console.log(list);
       setScheduleList(list);
     }
   }, [scTemp, user]);

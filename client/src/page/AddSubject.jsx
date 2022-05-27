@@ -63,6 +63,7 @@ const AddSubject = () => {
   const location = useLocation();
   const { schedule } = location.state;
   const scheduleId = schedule._id;
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const [createSubjectMutation] = useMutation(CREATE_SUBJECT_MUTATION);
@@ -74,10 +75,6 @@ const AddSubject = () => {
   console.log("id: " + scheduleId);
 
   const submitSubjectInfo = useCallback(async () => {
-    console.log(subjectName);
-    console.log(subjectTime);
-    console.log(subjectLink);
-    console.log(day);
     if (subjectName && subjectTime && subjectLink && day) {
       // let requestSubject = {
       //   subject_name: subjectName,
@@ -115,7 +112,6 @@ const AddSubject = () => {
   });
 
   function handleChange(e) {
-    console.log(e.value);
     setDay(e.value);
   }
 

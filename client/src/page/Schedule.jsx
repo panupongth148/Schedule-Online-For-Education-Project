@@ -62,8 +62,8 @@ const Schedule = () => {
   const location = useLocation();
   const { schedule } = location.state;
   const schedule_id = schedule._id;
-  console.log(typeof schedule_id);
   const navigate = useNavigate();
+
   const [deleteScheduleMutation] = useMutation(DELETE_SCHEDULE);
   const [deleteSubjectByIdMutation] = useMutation(DELETE_SUBJECT);
   const [deleteSubjectAllMutation] = useMutation(DELETE_ALLSUBJECT);

@@ -14,7 +14,7 @@
 }
 
 .Link {
-  textDecorationLine: "none";
+  text-decoration: "none";
   color: "white";
 }
 

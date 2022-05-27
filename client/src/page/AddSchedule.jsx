@@ -51,10 +51,6 @@ const AddSchedule = () => {
 
   const summitCode = useCallback(
     async (event) => {
-      console.log("test");
-      console.log("code : " + code);
-      console.log("id : " + id);
-
       event.preventDefault();
       try {
         const { data } = await addSchedule({

@@ -18,17 +18,14 @@ const CreateScheduleNext = (props) => {
 
   async function getScheduleList() {
     let response = await axios.get(`/getsubjectbysid/${scheduleId}`);
-    console.log(response.data);
     let scheduleList = response.data;
     setSubjectData(scheduleList);
-    console.log(subjectData);
   }
 
   useEffect(() => {
     // Update the document title using the browser API
     getScheduleList();
   }, [setSubjectData]);
-  console.log(scheduleName + " = " + scheduleId);
 
   return (
     <div className="App">

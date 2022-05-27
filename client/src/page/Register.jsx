@@ -28,7 +28,6 @@ const Register = () => {
   const onSubmitRegister = useCallback(
     async (e) => {
       e.preventDefault();
-      console.log(password === confirmPassword);
       if (password !== confirmPassword) {
         setError("password ไม่ตรงกัน");
       } else if (password === confirmPassword) {
