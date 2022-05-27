@@ -7,14 +7,12 @@ const SubjectSchema = new Schema({
         type: String,
         required: true,
         index: true,
-        unique: true,
         lowercase: true,
         trim: true,
     },
     date: {
         type: String,
         required: true,
-        bcrypt: true,
     },
     time: {
         type: String,
