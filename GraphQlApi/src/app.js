@@ -14,7 +14,7 @@ import jsonwebtoken from "jsonwebtoken";
 import schema from "./graphql";
 
 const app = express();
-app.use(cors({ origin: [process.env.CORS_ORIGIN], credentials: true }));
+app.use(cors({ origin: ['http://54.84.85.11','http://ec2-54-84-85-11.compute-1.amazonaws.com/', 'http://localhost:3000'], credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -54,7 +54,7 @@ const startApolloServer = async () => {
   apolloServer.applyMiddleware({
     app,
     path: "/graphql",
-    cors: { origin: [process.env.CORS_ORIGIN], credentials: true },
+    cors: { origin: ['http://54.84.85.11','http://ec2-54-84-85-11.compute-1.amazonaws.com/', 'http://localhost:3000'], credentials: true },
   });
   httpServer.listen({ port: 3001 });
   console.log("Server running at: http://localhost:3001/graphql");
