@@ -9,12 +9,15 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "../components/Footer";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useCallback, useState } from "react";
 import Select from "react-select";
-import axios from "../plugins/axios";
 import { gql, useMutation } from "@apollo/client";
 import styled from "styled-components";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 const Background = styled.div`
   display: flex;
@@ -59,9 +62,11 @@ const AddSubject = () => {
   const location = useLocation();
   const { schedule } = location.state;
   const scheduleId = schedule._id;
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const [createSubjectMutation] = useMutation(CREATE_SUBJECT_MUTATION);
-  const [day, setDay] = useState("Monday");
+  const [day, setDay] = useState("");
   const [subjectName, setSubjectName] = useState("");
   const [subjectTime, setSubjectTime] = useState("");
   const [subjectLink, setSubjectLink] = useState("");
@@ -69,10 +74,6 @@ const AddSubject = () => {
   console.log("id: " + scheduleId);
 
   const submitSubjectInfo = useCallback(async () => {
-    console.log(subjectName);
-    console.log(subjectTime);
-    console.log(subjectLink);
-    console.log(day);
     if (subjectName && subjectTime && subjectLink && day) {
       // let requestSubject = {
       //   subject_name: subjectName,
@@ -95,17 +96,21 @@ const AddSubject = () => {
             },
           },
         });
-        alert("Add subject success");
+        await MySwal.fire({
+          title: "เพิ่มวิชาสำเร็จ!",
+        });
+        navigate("/Schedule", { state: { schedule: schedule } });
       } catch (err) {
         console.log(err.message);
       }
     } else {
-      alert("Please input data");
+      await MySwal.fire({
+        title: "กรุณากรอกข้อมูลให้ครบนะคะ!",
+      });
     }
   });
 
   function handleChange(e) {
-    console.log(e.value);
     setDay(e.value);
   }
 
@@ -191,13 +196,13 @@ const AddSubject = () => {
                   }}
                   onClick={submitSubjectInfo}
                 >
-                  <Link
+                  {/* <Link
                     style={{ textDecorationLine: "none", color: "white" }}
                     to={{ pathname: `/Schedule` }}
                     state={{ schedule: schedule }}
-                  >
-                    Add
-                  </Link>
+                  > */}
+                  Add
+                  {/* </Link> */}
                 </Button>
               </div>
             </Container>

@@ -6,7 +6,10 @@ import { gql, useMutation } from "@apollo/client";
 import { GenerateCode } from "../plugins/GenerateCode";
 import React, { useState } from "react";
 import Footer from "../components/Footer";
-import axios from "../plugins/axios";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 const Background = styled.div`
   display: flex;
@@ -41,7 +44,7 @@ const CREATE_SCHEDULE = gql`
 const CreateSchedule = () => {
   const [schedule, setSchedule] = useState(null);
   const [createScheduleMutation] = useMutation(CREATE_SCHEDULE);
-  const [success, setSuccess] = useState(null);
+  // const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const id = useLocation().state.id;
   let navigate = useNavigate();
@@ -62,7 +65,11 @@ const CreateSchedule = () => {
         },
       });
       if (createSchedule) {
-        setSuccess(true);
+        // setSuccess(true);
+        await MySwal.fire({
+          title: "เพิ่มตารางสำเร็จ!",
+        });
+        navigate("/", { replace: true });
       }
     } catch (error) {
       setError(true);
@@ -86,14 +93,14 @@ const CreateSchedule = () => {
         >
           <FlexContainer>
             <Container>
-              {success && (
+              {/* {success && (
                 <div class="alert alert-primary" role="alert">
                   เพิ่มตารางเวลาใหม่สำเร็จ!
                 </div>
-              )}
+              )} */}
               {error && (
                 <div class="alert alert-danger" role="alert">
-                  เพิ่มตารางเวลาใหม่ไม่สำเร็จ กรุณากรอกชื่อตารางด้วยค่ะ!
+                  กรุณากรอกชื่อตารางด้วยค่ะ!
                 </div>
               )}
               <h1 className="title is-1 has-text-white">Create Schedule</h1>

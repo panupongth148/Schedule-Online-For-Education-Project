@@ -2,14 +2,12 @@ import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "../plugins/axios";
 import Cookies from "js-cookie";
 import { gql, useQuery } from "@apollo/client";
 
 import HomePage from "../page/Homepage";
 import AddSchedule from "../page/AddSchedule";
 import CreateSchedule from "../page/CreateSchedule";
-import CreateScheduleNext from "../page/CreateScheduleNext";
 import AddSubject from "../page/AddSubject";
 import Login from "../page/Login";
 import Register from "../page/Register";
@@ -96,11 +94,6 @@ const Navigation = () => {
             name="CreateSchedule"
             path="/CreateSc"
             element={<CreateSchedule />}
-          ></Route>
-          <Route
-            name="CreateScheduleNext"
-            path="/CreateSc2"
-            element={<CreateScheduleNext />}
           ></Route>
           <Route
             name="AddSubject"

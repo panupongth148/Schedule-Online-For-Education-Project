@@ -22,3 +22,18 @@ export const Box = styled.div`
     margin: 0px;
   }
 `;
+
+export const BoxSchedule = styled.div`
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: auto;
+`;
+
+export const ScheduleContainer = styled.div`
+  display: flex;
+  background: #eaddca;
+  width: 100%;
+  min-height: 100vh;
+`;
