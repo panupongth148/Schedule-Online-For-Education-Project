@@ -59,7 +59,7 @@ const Register = () => {
           console.log(err.message);
         }
       }
-    }, [username, password, name, email, registerMutation]
+    }, [username, password, name, email, registerMutation, confirmPassword]
   );
 
   // console.log(data)
