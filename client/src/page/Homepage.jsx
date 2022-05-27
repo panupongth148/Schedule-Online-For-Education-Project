@@ -28,34 +28,19 @@ const Container = styled.div`
     display: flex;
     justify-content: space-between;
   }
-  `;
-  
+`;
+
 const Homepage = () => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [scTemp, setScTemp] = useState(null);
-  const [scheduleList, setScheduleList] = useState(null)
   const [
     { data: data1 },
     { data: data2 },
   ] = QueryMultiple();
-
   useEffect(() => {
-    setUser(data1)
-   }, [data1]);
-
-  useEffect(() => {
-   setScTemp(data2)
-  }, [data2]);
-
-  useEffect(() => {
-    if (scTemp && user) {
-      const list = scTemp.schedules.filter(sc => sc.userId === user.me._id)
-      console.log(list)
-      setScheduleList(list)
-    }
-  }, [scTemp, user])
-
+   setScTemp(data1)
+   console.log(scTemp)
+  }, [data1]);
+  const navigate = useNavigate();
   return (
     <>
       {data1 && (
@@ -72,8 +57,8 @@ const Homepage = () => {
                           <span>
                             <Badge bg="warning">
                               <FontAwesomeIcon icon={faCalendarPlus} />{" "}
-                              {!scheduleList && <>loading...</>}
-                              {scheduleList && <>{scheduleList.length}</>}
+                              {!data2 && <>loading...</>}
+                              {data2 && <>{data2.schedules.length}</>}
                             </Badge>
                           </span>
                         </h1>
@@ -91,7 +76,7 @@ const Homepage = () => {
                           <Button
                             className="bn2"
                             onClick={() => {
-                              navigate("/Addsc", {state: { id: data1._id }});
+                              navigate("/Addsc", {state: { id: data1.me._id }});
                             }}
                           >
                             Add Schedule
@@ -99,8 +84,8 @@ const Homepage = () => {
                         </ButtonGroup>
                       </Container>
                     </a>
-                    {!scheduleList && <>loading...</>}
-                    {scheduleList && scheduleList.length === 0 && (
+                    {!data2 && <>loading...</>}
+                    {data2 && data2.length === 0 && (
                       <>
                         <div className="d-flex justify-content-center">
                           <div class="card mt-6">
@@ -114,9 +99,9 @@ const Homepage = () => {
                       </>
                     )}
                     <ul>
-                      {scheduleList &&
-                        scheduleList.length !== 0 &&
-                        scheduleList.map((schedule) => {
+                      {data2 &&
+                        data2.length !== 0 &&
+                        data2.schedules.map((schedule) => {
                           return (
                             <HomepageSchedule
                               key={schedule._id}

@@ -9,7 +9,7 @@ import { gql, useQuery, useMutation } from '@apollo/client';
 
 const ADDSCHEDULE_MUTATION = gql`
 mutation($code: String!, $userId: String!){
-  addSchedule(code: $code, userId: $userid){
+  addSchedule(code: $code, userId: $userId){
     status
     message
   }
@@ -42,9 +42,8 @@ const AddSchedule = () => {
   const [code, setCode] = useState("");
   const [addSchedule] = useMutation(ADDSCHEDULE_MUTATION)
   const [error, setError] = useState("")
-  const id = useLocation().state;
+  const id = useLocation().state.id;
 
-console.log(id)
 
 
   const summitCode = useCallback(
