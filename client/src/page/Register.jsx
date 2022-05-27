@@ -31,7 +31,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("Password1");
   const [email, setEmail] = useState("owen@gmail.com");
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [registerMutation] = useMutation(REGISTER_MUTATION);
   // const { data } = useQuery(USERS_QUERY)
@@ -54,15 +54,10 @@ const Register = () => {
               }
             }
           })
-          
-          console.log('register success')
-          
-          // navigate('/Login');
-          // alert('register success');
+          alert('register success')
         } catch (err) {
-          alert(err.message);
+          console.log(err.message);
         }
-        // navigate('/Login')
       }
     }, [username, password, name, email, registerMutation]
   );
@@ -168,7 +163,7 @@ const Register = () => {
 
             <button
               class="button is-link is-fullwidth"
-              onClick={() => onSubmitRegister()}
+              onClick={() => { onSubmitRegister(); navigate('/Login'); }}
             >
               Sign up
             </button>
