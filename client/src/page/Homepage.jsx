@@ -32,12 +32,9 @@ const Container = styled.div`
 
 const Homepage = () => {
   const [
-    { loading: loading1, data: data1 },
-    { loading: loading2, data: data2 },
+    { data: data1 },
+    { data: data2 },
   ] = QueryMultiple();
-
-  console.log(data1);
-  console.log(data2);
 
   const navigate = useNavigate();
 

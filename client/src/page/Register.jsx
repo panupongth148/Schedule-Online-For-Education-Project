@@ -25,11 +25,11 @@ const REGISTER_MUTATION = gql`
 // `
 
 const Register = () => {
-  const [name, setName] = useState("owen");
-  const [username, setUsername] = useState("owen");
-  const [password, setPassword] = useState("Password1");
-  const [confirmPassword, setConfirmPassword] = useState("Password1");
-  const [email, setEmail] = useState("owen@gmail.com");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   const navigate = useNavigate();
 
