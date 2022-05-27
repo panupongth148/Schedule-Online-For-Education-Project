@@ -27,23 +27,12 @@ const ME_QUERY = gql`
 `;
 
 const Navigation = () => {
-  const data = useQuery(ME_QUERY);
-  const [user, setUser] = useState(null)
+  const {loading, data} = useQuery(ME_QUERY);
   
   const logout = () => {
     Cookies.remove("token");
     window.location.reload(false);
   };
-  
-  if (data.data) {
-    setUser(data.data.me);
-  }
-  console.log(user);
-  
-  // useEffect(() => {
-  //   // Update the document title using the browser API
-  //   if (data.data) getUserByToken();
-  // }, []);
 
   return (
     <>
@@ -65,7 +54,7 @@ const Navigation = () => {
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="me-auto"></Nav>
-              {!user && (
+              {!data && (
                 <Nav>
                   <Nav.Link
                     style={{ color: "#FCF69C" }}
@@ -79,10 +68,10 @@ const Navigation = () => {
                   </Nav.Link>
                 </Nav>
               )}
-              {user && (
+              {data && (
                 <Nav>
                   <Nav.Link style={{ color: "#FCF69C" }}>
-                    {user.me.name}
+                    {data.me.name}
                   </Nav.Link>
                   <Nav.Link
                     style={{ color: "#FCF69C" }}
@@ -97,7 +86,7 @@ const Navigation = () => {
           </Container>
         </Navbar>
         <Routes>
-          <Route exact name="home" path="/" element={<HomePage />}></Route>
+          <Route exact name="home" path="/" _id={data._id} element={<HomePage />} ></Route>
           <Route
             name="AddSchedule"
             path="/AddSc"
