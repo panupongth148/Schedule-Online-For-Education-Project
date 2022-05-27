@@ -31,7 +31,7 @@ export const login = schemaComposer.createResolver({
             return {
                 status: "failed",
                 message: "Username or Password is incorrect",
-                User: null
+                token: null
             };
         }
 
