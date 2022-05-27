@@ -64,7 +64,7 @@ const Homepage = () => {
                             className="bn1"
                             onClick={() => {
                               navigate("/Createsc", {
-                                state: { id: data1._id },
+                                state: { id: data1.me._id },
                               });
                             }}
                           >
