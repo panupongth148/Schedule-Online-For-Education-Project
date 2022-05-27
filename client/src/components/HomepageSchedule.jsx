@@ -11,14 +11,14 @@ const HomepageSchedule = (props) => {
         style={{
           textDecorationLine: "none",
           fontSize: "20px",
-          backgroundColor: "rgb(255, 255, 255, 0.30)",
+          backgroundColor: "rgb(0, 0, 0, 0.70)",
         }}
         to={`/Schedule`}
         state={{ schedule: props.schedule }}
         className="has-text-warning-light"
       >
         <li id="scheduleName">
-          <a>{props.schedule.s_name}</a>
+          <a>{props.schedule.title}</a>
         </li>
       </Link>
     </>

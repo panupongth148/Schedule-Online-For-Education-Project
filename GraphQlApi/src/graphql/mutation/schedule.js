@@ -31,7 +31,8 @@ export const addSchedule = schemaComposer.createResolver({
     if(!schedule){
         return {
             status: "fail",
-            message: "code can't use"
+            message: "code can't use",
+
             
         }
     }
@@ -43,24 +44,28 @@ export const addSchedule = schemaComposer.createResolver({
     const codeNew = generateToken();
     try{
       const createSchedule = await ScheduleModel.create({title: schedule.title, code: codeNew, userId: userId})
-      console.log(createSchedule)
-      // subjects.map(async (subject)=>{
-      //   const createSub = await SubjectModel.create({
-      //     subjectName: subject.subjectName,
-      //     date: subject.date,
-      //     time: subject.time,
-      //     link: subject.link,
-      //     scheduleId: subject.scheduleId
-      //   })
-      //   console.log(createSub)
-      // })
+      // console.log(createSchedule)
+
+
+      console.log(schedule._id.toString())
+      subjects.map(async (subject)=>{
+        const createSub = await SubjectModel.create({
+          subjectName: subject.subjectName,
+          date: subject.date,
+          time: subject.time,
+          link: subject.link,
+          scheduleId: schedule._id.toString()
+        })
+        console.log(createSub)
+      })
       // for(let i = 0; i< subjects.length;i++){
-      //   const createSubject = await SubjectModel.create({
+      //   console.log("in loop")
+      //   SubjectModel.create({
       //     subjectName: subjects[i].subjectName,
       //     date: subjects[i].date,
       //     time: subjects[i].time,
       //     link: subjects[i].link,
-      //     scheduleId: subjects[i].scheduleId
+      //     scheduleId: schedule.scheduleId
       //   })
       // }
       // console.log(createSubject)
