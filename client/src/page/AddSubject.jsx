@@ -10,9 +10,18 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "../components/Footer";
 import { Link, useLocation } from "react-router-dom";
-import React, { Component, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Select from "react-select";
 import axios from "../plugins/axios";
+import { gql, useMutation } from '@apollo/client';
+
+const CREATE_SUBJECT_MUTATION = gql`
+  mutation ($record: CreateOneSubjectInput!) {
+    createSubject (record: $record) {
+      __typename
+    }
+  }
+`
 
 const options = [
   { value: "Monday", label: "Monday" },
@@ -25,39 +34,60 @@ const options = [
 ];
 const AddSubject = () => {
   const location = useLocation();
-  const { scheduleName, scheduleId } = location.state;
+  const { schedule } = location.state;
+  const scheduleId = schedule._id
 
+  const [createSubjectMutation] = useMutation(CREATE_SUBJECT_MUTATION);
   const [day, setDay] = useState("Monday");
   const [subjectName, setSubjectName] = useState("");
   const [subjectTime, setSubjectTime] = useState("");
   const [subjectLink, setSubjectLink] = useState("");
-  const [subject, setSubject] = useState(null);
-  const [noSubject, setNoSubject] = useState(null);
 
-  console.log(scheduleName + " " + scheduleId);
-  useEffect(() => {
-    // Update the document title using the browser API
-  });
-  const submitSubjectInfo = () => {
-    console.log(subjectName);
-    console.log(subjectTime);
-    console.log(subjectLink);
-    console.log(day);
+  console.log("id: " + scheduleId);
 
-    let requestSubject = {
-      subject_name: subjectName,
-      period: subjectTime,
-      date: day,
-      link: subjectLink,
-      schedule_id: scheduleId,
-    };
-    console.log(requestSubject);
-    axios.post("/addsubject", requestSubject);
-  };
+  const submitSubjectInfo = useCallback(
+    async () => {
+      console.log(subjectName);
+      console.log(subjectTime);
+      console.log(subjectLink);
+      console.log(day);
+      if (subjectName && subjectTime && subjectLink && day) {
+        // let requestSubject = {
+        //   subject_name: subjectName,
+        //   period: subjectTime,
+        //   date: day,
+        //   link: subjectLink,
+        //   schedule_id: scheduleId,
+        // };
+        // console.log(requestSubject);
+
+        try {
+          await createSubjectMutation({
+            variables: {
+              record: {
+                subjectName: subjectName,
+                date: day,
+                time: subjectTime,
+                link: subjectLink,
+                scheduleId: scheduleId
+              }
+            }
+          })
+          alert('Add subject success')
+        } catch (err) {
+          console.log(err.message);
+        }
+      } else {
+        alert("Please input data")
+      }
+    }
+  );
+
   function handleChange(e) {
     console.log(e.value);
     setDay(e.value);
   }
+
   return (
     <div className="App">
       <div className="container mt-5" style={{ backgroundColor: "#AB46D2" }}>
@@ -127,8 +157,8 @@ const AddSubject = () => {
           >
             <Link
               style={{ textDecorationLine: "none", color: "white" }}
-              to={{ pathname: `/Createsc2` }}
-              state={{ scheduleName: scheduleName, scheduleId: scheduleId }}
+              to={{ pathname: `/Schedule` }}
+              state={{ schedule: schedule }}
             >
               Add
             </Link>

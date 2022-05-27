@@ -13,29 +13,49 @@ import Subject from "./../components/Subject";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import axios from "../plugins/axios";
+import { useQuery, gql } from "@apollo/client";
+
+const SCHEDULE_QUERY = gql`
+  query ($_id: MongoID!) {
+    scheduleId (_id: $_id) {
+      subjects {
+        time
+        date
+        subjectName
+        link
+        _id
+      }
+    }
+  }
+`;
 
 const Schedule = () => {
   const location = useLocation();
   const { schedule } = location.state;
-  const schedule_id = schedule.schedule_id;
+  const schedule_id = schedule._id;
+  console.log(typeof(schedule_id))
   const navigate = useNavigate();
 
-  const [subjectData, setSubjectData] = useState(null);
+  const { loading, data } = useQuery(SCHEDULE_QUERY, {
+    variables: { "_id": schedule_id },
+  });
+  console.log(data);
+  // const [subjectData, setSubjectData] = useState(null);
   const [deleteStatus, setDeleteStatus] = useState("hidden");
 
   // Get Schedules
-  async function getScheduleList() {
-    let response = await axios.get(`/getsubjectbysid/${schedule_id}`);
-    console.log(response.data);
-    let scheduleList = response.data;
-    setSubjectData(scheduleList);
-    console.log(subjectData);
-  }
+  // async function getScheduleList() {
+  //   let response = await axios.get(`/getsubjectbysid/${schedule_id}`);
+  //   console.log(response.data);
+  //   let scheduleList = response.data;
+  //   setSubjectData(scheduleList);
+  //   console.log(subjectData);
+  // }
 
-  useEffect(() => {
-    // Update the document title using the browser API
-    getScheduleList();
-  }, []);
+  // useEffect(() => {
+  //   // Update the document title using the browser API
+  //   getScheduleList();
+  // }, []);
 
   const handleDeleteButton = (status) => {
     setDeleteStatus(status);
@@ -43,7 +63,7 @@ const Schedule = () => {
 
   // Delete Schedule
   async function handleDeleteSubmit() {
-    console.log(schedule_id);
+    // console.log(schedule_id);
     await axios
       .delete(`/subject/delbyscid`, { data: { schedule_id: schedule_id } })
       .catch((err) => {
@@ -59,11 +79,13 @@ const Schedule = () => {
         console.log(err);
       });
   }
+  
+  if (loading) return null;
 
   return (
     <div className="App">
       <div className="container mt-5">
-        <h2>{schedule.s_name}</h2>
+        <h2>{schedule.title}</h2>
         <p>
           <b>Code:</b> {schedule.code}
         </p>
@@ -77,9 +99,9 @@ const Schedule = () => {
             </tr>
           </thead>
           <tbody>
-            {subjectData &&
-              subjectData.map((subject) => {
-                return <Subject key={subject.id} subject={subject} />;
+            {data.scheduleId.subjects &&
+              data.scheduleId.subjects.map((subject) => {
+                return <Subject key={subject._id} subject={subject} />;
               })}
           </tbody>
         </Table>
@@ -89,8 +111,8 @@ const Schedule = () => {
         >
           <Link
             style={{ textDecorationLine: "none", color: "white" }}
-            to={`/Createsc2`}
-            state={{ scheduleName: schedule.s_name, scheduleId: schedule_id }}
+            to={`/AddSj`}
+            state={{ schedule: schedule }}
           >
             Add Subject
           </Link>
