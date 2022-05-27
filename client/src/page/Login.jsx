@@ -1,50 +1,65 @@
 import { Button, InputGroup, FormControl } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import axios from "../plugins/axios";
 import Footer from "../components/Footer";
 import { useNavigate, Navigate } from "react-router-dom";
 import "../assets/Styles.css";
 import itlogo from "../assets/picture/it-logo.png";
 import { FlexContainer, Box } from "../components/Components";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
+import { gql, useMutation } from "@apollo/client";
 
-import { gql, useQuery } from '@apollo/client';
-
-// const LOGIN = gql``
-
+const LOGIN = gql`
+  mutation ($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      status
+      message
+      token
+    }
+  }
+`;
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState("");
+  const [error, setError] = useState("");
+  const [loginMutation] = useMutation(LOGIN);
   let navigate = useNavigate();
 
-  const onSubmitLogin = (event) => {
-    event.preventDefault();
-    console.log("Login user : " + username);
-
-    // axios
-    axios
-      .post("/user/login", {
-        username: username,
-        password: password,
-      })
-      .then((response) => {
-        console.log(response);
-        localStorage.setItem("token", response.data);
-        setLogin(true);
-      })
-      .catch(function (error) {
+  const onSubmitLogin = useCallback(
+    async (event) => {
+      console.log("test");
+      event.preventDefault();
+      try {
+        const statusLogin = await loginMutation({
+          variables: {
+            username: username,
+            password: password,
+          },
+        });
+        console.log(statusLogin);
+        if (statusLogin.data.login.status === "success") {
+          Cookies.set("token", statusLogin.data.login.token, {
+            expires: 7,
+            path: "*",
+          });
+          setLogin(true);
+        } else {
+          setLogin(false);
+          setError("Username or Password is incorrect");
+        }
+      } catch (error) {
         console.log(error);
-      });
+        setError("Username or Password is incorrect");
+      }
 
-    setUsername("");
-    setPassword("");
-
-    console.log("Login success");
-    // navigate("/", {});
-  };
+      setUsername("");
+      setPassword("");
+    },
+    [username, password, loginMutation]
+  );
 
   if (login) {
     return <Navigate to="/" />;
@@ -57,6 +72,11 @@ const Login = () => {
           <img id="logo" src={itlogo} alt="it-logo" />
           <form id="formLogin" class="box" onSubmit={onSubmitLogin}>
             <h1 class="title has-text-centered">Login</h1>
+            {error !== "" && (
+              <div class="alert alert-danger" role="alert">
+                {error}
+              </div>
+            )}
             <div class="field">
               <label class="label">Username</label>
               <div class="control">
