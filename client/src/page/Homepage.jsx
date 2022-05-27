@@ -73,7 +73,7 @@ const Homepage = () => {
                           <Button
                             className="bn2"
                             onClick={() => {
-                              navigate("/Addsc");
+                              navigate("/Addsc", {state: { id: data1._id }});
                             }}
                           >
                             Add Schedule
