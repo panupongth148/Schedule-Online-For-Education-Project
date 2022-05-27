@@ -13,73 +13,144 @@ import Subject from "./../components/Subject";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import axios from "../plugins/axios";
+import { useQuery, gql, useMutation } from "@apollo/client";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
+
+const SCHEDULE_QUERY = gql`
+  query ($_id: MongoID!) {
+    scheduleId(_id: $_id) {
+      subjects {
+        time
+        date
+        subjectName
+        link
+        _id
+      }
+    }
+  }
+`;
+
+const DELETE_SCHEDULE = gql`
+  mutation ($id: MongoID!) {
+    deleteScheduleId(_id: $id) {
+      recordId
+    }
+  }
+`;
+
+const DELETE_SUBJECT = gql`
+  mutation ($id: MongoID!) {
+    deleteSubjectById(_id: $id) {
+      recordId
+    }
+  }
+`;
+
+const DELETE_ALLSUBJECT = gql`
+  mutation ($filter: FilterRemoveManySubjectInput!) {
+    deleteSubjectAllById(filter: $filter) {
+      numAffected
+    }
+  }
+`;
 
 const Schedule = () => {
   const location = useLocation();
   const { schedule } = location.state;
-  const schedule_id = schedule.schedule_id;
+  const schedule_id = schedule._id;
+  console.log(typeof schedule_id);
   const navigate = useNavigate();
+  const [deleteScheduleMutation] = useMutation(DELETE_SCHEDULE);
+  const [deleteSubjectByIdMutation] = useMutation(DELETE_SUBJECT);
+  const [deleteSubjectAllMutation] = useMutation(DELETE_ALLSUBJECT);
 
-  const [subjectData, setSubjectData] = useState(null);
-  const [deleteStatus, setDeleteStatus] = useState("hidden");
+  const { loading, data, refetch } = useQuery(SCHEDULE_QUERY, {
+    variables: { _id: schedule_id },
+  });
 
-  // Get Schedules
-  async function getScheduleList() {
-    let response = await axios.get(`/getsubjectbysid/${schedule_id}`);
-    console.log(response.data);
-    let scheduleList = response.data;
-    setSubjectData(scheduleList);
-    console.log(subjectData);
-  }
+  const handleDeleteButton = async () => {
+    await MySwal.fire({
+      title: "ลบตาราง",
+      text: "คุณต้องการจะลบตารางและวิชาทั้งหมดในตารางนี้?",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          if (data.scheduleId.subjects.length !== 0) {
+            await deleteSubjectAllMutation({
+              variables: {
+                filter: {
+                  scheduleId: schedule_id,
+                },
+              },
+            });
+          }
+          await deleteScheduleMutation({
+            variables: {
+              id: schedule_id,
+            },
+          });
 
-  useEffect(() => {
-    // Update the document title using the browser API
-    getScheduleList();
-  }, []);
-
-  const handleDeleteButton = (status) => {
-    setDeleteStatus(status);
+          await Swal.fire("ลบสำเร็จ", "", "success");
+          navigate("/", { replace: true });
+        } catch (error) {
+          console.log(error);
+          await Swal.fire(
+            `ไม่สามารถลบได้เนื่องจาก Error code:${error.message}`,
+            "",
+            "info"
+          );
+        }
+      }
+    });
   };
 
-  // Delete Schedule
-  async function handleDeleteSubmit() {
-    console.log(schedule_id);
-    await axios
-      .delete(`/subject/delbyscid`, { data: { schedule_id: schedule_id } })
-      .catch((err) => {
-        console.log(err);
+  async function deleteSubjectById(subjectId) {
+    try {
+      await deleteSubjectByIdMutation({
+        variables: {
+          id: subjectId,
+        },
       });
-    await axios
-      .delete("/deleteschedule", { data: { schedule_id: schedule_id } })
-      .then((res) => {
-        alert(res.data);
-        navigate("/");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
   }
+
+  if (loading) return null;
 
   return (
     <div className="App">
       <div className="container mt-5">
-        <h2>{schedule.s_name}</h2>
+        <h2>{schedule.title}</h2>
         <p>
           <b>Code:</b> {schedule.code}
         </p>
         <Table striped bordered hover className="mt-5">
           <thead>
             <tr>
-              <th>Day</th>
-              <th>Subject</th>
-              <th>Time</th>
-              <th>Link</th>
+              <th style={{ textAlign: "center" }}>Day</th>
+              <th style={{ textAlign: "center" }}>Subject</th>
+              <th style={{ textAlign: "center" }}>Time</th>
+              <th style={{ textAlign: "center" }}>Link</th>
+              <th style={{ textAlign: "center" }}>Option</th>
             </tr>
           </thead>
           <tbody>
-            {subjectData &&
-              subjectData.map((subject) => {
-                return <Subject key={subject.id} subject={subject} />;
+            {data.scheduleId.subjects &&
+              data.scheduleId.subjects.map((subject) => {
+                return (
+                  <Subject
+                    key={subject._id}
+                    subject={subject}
+                    deleteSubjectById={deleteSubjectById}
+                  />
+                );
               })}
           </tbody>
         </Table>
@@ -89,8 +160,8 @@ const Schedule = () => {
         >
           <Link
             style={{ textDecorationLine: "none", color: "white" }}
-            to={`/Createsc2`}
-            state={{ scheduleName: schedule.s_name, scheduleId: schedule_id }}
+            to={`/AddSj`}
+            state={{ schedule: schedule }}
           >
             Add Subject
           </Link>
@@ -98,32 +169,10 @@ const Schedule = () => {
         <Button
           variant="danger"
           style={{ width: "100%" }}
-          onClick={() => handleDeleteButton("visible")}
+          onClick={() => handleDeleteButton()}
         >
           Delete this schedule
         </Button>
-
-        <ModalDialog style={{ visibility: deleteStatus }}>
-          <ModalHeader closeButton>
-            <ModalTitle>Confirm to delete this schedule.</ModalTitle>
-          </ModalHeader>
-
-          <ModalBody>
-            <p>Please choose your choice.</p>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button
-              variant="secondary"
-              onClick={() => handleDeleteButton("hidden")}
-            >
-              Close
-            </Button>
-            <Button variant="primary" onClick={handleDeleteSubmit}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalDialog>
       </div>
       <Footer />
     </div>

@@ -4,15 +4,13 @@ import { useNavigate, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import HomepageSchedule from "./../components/HomepageSchedule";
 import Footer from "../components/Footer";
-import axios from "../plugins/axios";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
 import { FlexContainer } from "../components/Components";
 import "../assets/Styles.css";
 import person from "../assets/picture/person.png";
-import Cookies from "js-cookie";
-import { gql, useQuery } from "@apollo/client";
+import QueryMultiple from "./Query";
 
 const ButtonGroup = styled.div`
   .bn1, .bn2{
@@ -27,61 +25,37 @@ const Container = styled.div`
     display: flex;
     justify-content: space-between;
   }
-`;
-
-const Me = gql`
-  query {
-    me {
-      _id
-      name
-      username
-      email
-    }
-  }
-`;
-
-const SCHEDULE_QUERY = gql`
-  query {
-    schedules {
-      _id
-      title
-      userId
-      code
-    }
-  }
-`;
-
+  `;
+  
 const Homepage = () => {
-  const [user, setUser] = useState({account_id: 0});
-  const [schedules, setSchedules] = useState(null);
-
-  const me = useQuery(Me);
-  const schedule = useQuery(SCHEDULE_QUERY);
-
   const navigate = useNavigate();
-  
-  function getScheduleList() {
-    console.log(schedule.data.schedules);
-    setSchedules(schedule.data.schedules);
-  }
-  
-  function getUserByToken() {
-    console.log(me.data.me);
-    setUser(me.data.me._id);
-  }
+  const [user, setUser] = useState(null);
+  const [scTemp, setScTemp] = useState(null);
+  const [scheduleList, setScheduleList] = useState(null)
+  const [
+    { data: data1 },
+    { data: data2 },
+  ] = QueryMultiple();
 
   useEffect(() => {
-    // Update the document title using the browser API
-    getScheduleList();
-  }, [user]);
+    setUser(data1)
+   }, [data1]);
 
   useEffect(() => {
-    getUserByToken();
-  }, []);
+   setScTemp(data2)
+  }, [data2]);
+
+  useEffect(() => {
+    if (scTemp && user) {
+      const list = scTemp.schedules.filter(sc => sc.userId === user.me._id)
+      console.log(list)
+      setScheduleList(list)
+    }
+  }, [scTemp, user])
 
   return (
     <>
-      {user.account_id !== 0 && (
+      {data1 && (
         <FlexContainer>
           <div className="container mt-5">
             <div className="container">
@@ -95,8 +69,8 @@ const Homepage = () => {
                           <span>
                             <Badge bg="warning">
                               <FontAwesomeIcon icon={faCalendarPlus} />{" "}
-                              {!schedule && <>loading...</>}
-                              {schedule && <>{schedules.length}</>}
+                              {!scheduleList && <>loading...</>}
+                              {scheduleList && <>{scheduleList.length}</>}
                             </Badge>
                           </span>
                         </h1>
@@ -105,7 +79,7 @@ const Homepage = () => {
                             className="bn1"
                             onClick={() => {
                               navigate("/Createsc", {
-                                state: { id: user.account_id },
+                                state: { id: data1.me._id },
                               });
                             }}
                           >
@@ -114,7 +88,7 @@ const Homepage = () => {
                           <Button
                             className="bn2"
                             onClick={() => {
-                              navigate("/Addsc");
+                              navigate("/Addsc", {state: { id: data1._id }});
                             }}
                           >
                             Add Schedule
@@ -122,8 +96,8 @@ const Homepage = () => {
                         </ButtonGroup>
                       </Container>
                     </a>
-                    {!schedules && <>loading...</>}
-                    {schedules && schedules.length === 0 && (
+                    {!scheduleList && <>loading...</>}
+                    {scheduleList && scheduleList.length === 0 && (
                       <>
                         <div className="d-flex justify-content-center">
                           <div class="card mt-6">
@@ -137,8 +111,9 @@ const Homepage = () => {
                       </>
                     )}
                     <ul>
-                      {schedules &&
-                        schedules.map((schedule) => {
+                      {scheduleList &&
+                        scheduleList.length !== 0 &&
+                        scheduleList.map((schedule) => {
                           return (
                             <HomepageSchedule
                               key={schedule._id}
@@ -154,7 +129,7 @@ const Homepage = () => {
           </div>
         </FlexContainer>
       )}
-      {user.account_id === 0 && (
+      {!data1 && (
         <div className="row g-0">
           <div className="col-md-6 g-0">
             <div className="leftside">

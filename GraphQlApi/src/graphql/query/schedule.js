@@ -32,7 +32,7 @@ export const schedulesByUserId = schemaComposer.createResolver({
                 Schedule: null
             }
         }
-        
+        console.log(schedule)
         return {
             status: "success",
             message: "have",

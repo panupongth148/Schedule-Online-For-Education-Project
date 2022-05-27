@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "../plugins/axios";
 import Cookies from "js-cookie";
-import { gql, useQuery } from '@apollo/client';
+import { gql, useQuery } from "@apollo/client";
 
 import HomePage from "../page/Homepage";
 import AddSchedule from "../page/AddSchedule";
@@ -27,8 +27,8 @@ const ME_QUERY = gql`
 `;
 
 const Navigation = () => {
-  const {loading, data} = useQuery(ME_QUERY);
-  
+  const { loading, data } = useQuery(ME_QUERY);
+
   const logout = () => {
     Cookies.remove("token");
     window.location.reload(false);
@@ -86,7 +86,7 @@ const Navigation = () => {
           </Container>
         </Navbar>
         <Routes>
-          <Route exact name="home" path="/" _id={data._id} element={<HomePage />} ></Route>
+          <Route exact name="home" path="/" element={<HomePage />}></Route>
           <Route
             name="AddSchedule"
             path="/AddSc"
