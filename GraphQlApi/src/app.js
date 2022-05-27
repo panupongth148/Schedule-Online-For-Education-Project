@@ -43,7 +43,7 @@ const startApolloServer = async () => {
       }
       if (token) {
         const payload = jsonwebtoken.verify(token, process.env.JWT_SECRET)
-        // console.log(payload)
+        console.log(payload)
         return { userId: payload.userId }
       }
       return { userId: null }
