@@ -1,8 +1,9 @@
 import { Button, InputGroup, FormControl, Placeholder } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styled from "styled-components";
-import { useNavigate, useLocation } from "react-router-dom";
-
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { gql, useMutation } from "@apollo/client";
+import { GenerateCode } from "../plugins/GenerateCode";
 import React, { useState } from "react";
 import Footer from "../components/Footer";
 import axios from "../plugins/axios";
@@ -29,35 +30,46 @@ const Container = styled.div`
   width: 80%;
 `;
 
+const CREATE_SCHEDULE = gql`
+  mutation ($record: CreateOneScheduleInput!) {
+    createSchedule(record: $record) {
+      recordId
+    }
+  }
+`;
+
 const CreateSchedule = () => {
   const [schedule, setSchedule] = useState(null);
+  const [createScheduleMutation] = useMutation(CREATE_SCHEDULE);
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
   const id = useLocation().state.id;
-  console.log("id: ", id);
-
   let navigate = useNavigate();
+  const code = GenerateCode();
+
   function handleChange(event) {
-    console.log("test has changed");
     setSchedule(event.target.value);
   }
-
   const createSchedule = async () => {
-    await axios
-      .post("/addschedule", {
-        s_name: schedule,
-        account_id: id,
-      })
-      .then(async (res) => {
-        console.log(res.data);
-        navigate("/Createsc2", {
-          state: { scheduleName: schedule, scheduleId: res.data.sehedule_id },
-        });
-      })
-      .catch((err) => {
-        console.log(err);
+    try {
+      const createSchedule = await createScheduleMutation({
+        variables: {
+          record: {
+            title: schedule,
+            userId: id,
+            code: code,
+          },
+        },
       });
-
-    // navigate('/sample', {replace: true});
+      if (createSchedule) {
+        setSuccess(true);
+      }
+    } catch (error) {
+      setError(true);
+      console.log(error);
+    }
   };
+
   return (
     <>
       <Background>
@@ -74,6 +86,16 @@ const CreateSchedule = () => {
         >
           <FlexContainer>
             <Container>
+              {success && (
+                <div class="alert alert-primary" role="alert">
+                  เพิ่มตารางเวลาใหม่สำเร็จ!
+                </div>
+              )}
+              {error && (
+                <div class="alert alert-danger" role="alert">
+                  เพิ่มตารางเวลาใหม่ไม่สำเร็จ กรุณากรอกชื่อตารางด้วยค่ะ!
+                </div>
+              )}
               <h1 className="title is-1 has-text-white">Create Schedule</h1>
               <InputGroup className="mb-3">
                 <InputGroup.Text style={{ backgroundColor: "#FCF69C" }}>

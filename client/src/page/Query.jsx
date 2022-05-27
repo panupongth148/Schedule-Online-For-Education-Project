@@ -1,6 +1,6 @@
 import { useQuery, gql } from "@apollo/client";
 
-const Me = gql`
+const ME = gql`
   query {
     me {
       _id
@@ -23,7 +23,7 @@ const SCHEDULE_QUERY = gql`
 `;
 
 const QueryMultiple = () => {
-  const res1 = useQuery(Me);
+  const res1 = useQuery(ME);
   const res2 = useQuery(SCHEDULE_QUERY);
   return [res1, res2];
 };
