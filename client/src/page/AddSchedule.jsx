@@ -2,7 +2,6 @@ import { Button, InputGroup, FormControl, Placeholder } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "../components/Footer";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import axios from "../plugins/axios";
 import { useState, useCallback } from "react";
 import styled from "styled-components";
 import { gql, useQuery, useMutation } from "@apollo/client";

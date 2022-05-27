@@ -12,7 +12,6 @@ import Footer from "../components/Footer";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import React, { useCallback, useState } from "react";
 import Select from "react-select";
-import axios from "../plugins/axios";
 import { gql, useMutation } from "@apollo/client";
 import styled from "styled-components";
 import Swal from "sweetalert2";

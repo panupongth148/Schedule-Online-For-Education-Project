@@ -12,7 +12,6 @@ import React, { useState, useEffect } from "react";
 import Subject from "./../components/Subject";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
-import axios from "../plugins/axios";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";

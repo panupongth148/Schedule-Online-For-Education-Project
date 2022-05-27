@@ -1,7 +1,6 @@
 import { Button, InputGroup, FormControl } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import React, { useState, useCallback } from "react";
-import axios from "../plugins/axios";
 import Footer from "../components/Footer";
 import { useNavigate, Navigate } from "react-router-dom";
 import "../assets/Styles.css";

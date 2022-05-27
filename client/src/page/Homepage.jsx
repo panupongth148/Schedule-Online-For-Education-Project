@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import HomepageSchedule from "./../components/HomepageSchedule";
 import Footer from "../components/Footer";
-import axios from "../plugins/axios";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";

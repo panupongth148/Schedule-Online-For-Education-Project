@@ -6,7 +6,6 @@ import { gql, useMutation } from "@apollo/client";
 import { GenerateCode } from "../plugins/GenerateCode";
 import React, { useState } from "react";
 import Footer from "../components/Footer";
-import axios from "../plugins/axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
