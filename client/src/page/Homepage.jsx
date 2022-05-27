@@ -4,15 +4,12 @@ import { useNavigate, Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import HomepageSchedule from "./../components/HomepageSchedule";
 import Footer from "../components/Footer";
-import axios from "../plugins/axios";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
 import { FlexContainer } from "../components/Components";
 import "../assets/Styles.css";
 import person from "../assets/picture/person.png";
-import Cookies from "js-cookie";
-import { gql, useQuery } from "@apollo/client";
 import QueryMultiple from "./Query";
 
 const ButtonGroup = styled.div`
@@ -28,19 +25,34 @@ const Container = styled.div`
     display: flex;
     justify-content: space-between;
   }
-`;
-
+  `;
+  
 const Homepage = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [scTemp, setScTemp] = useState(null);
+  const [scheduleList, setScheduleList] = useState(null)
   const [
     { data: data1 },
     { data: data2 },
   ] = QueryMultiple();
+
   useEffect(() => {
-   setScTemp(data1)
-   console.log(scTemp)
-  }, [data1]);
-  const navigate = useNavigate();
+    setUser(data1)
+   }, [data1]);
+
+  useEffect(() => {
+   setScTemp(data2)
+  }, [data2]);
+
+  useEffect(() => {
+    if (scTemp && user) {
+      const list = scTemp.schedules.filter(sc => sc.userId === user.me._id)
+      console.log(list)
+      setScheduleList(list)
+    }
+  }, [scTemp, user])
+
   return (
     <>
       {data1 && (
@@ -57,8 +69,8 @@ const Homepage = () => {
                           <span>
                             <Badge bg="warning">
                               <FontAwesomeIcon icon={faCalendarPlus} />{" "}
-                              {!data2 && <>loading...</>}
-                              {data2 && <>{data2.schedules.length}</>}
+                              {!scheduleList && <>loading...</>}
+                              {scheduleList && <>{scheduleList.length}</>}
                             </Badge>
                           </span>
                         </h1>
@@ -76,7 +88,7 @@ const Homepage = () => {
                           <Button
                             className="bn2"
                             onClick={() => {
-                              navigate("/Addsc", {state: { id: data1.me._id }});
+                              navigate("/Addsc", {state: { id: data1._id }});
                             }}
                           >
                             Add Schedule
@@ -84,8 +96,8 @@ const Homepage = () => {
                         </ButtonGroup>
                       </Container>
                     </a>
-                    {!data2 && <>loading...</>}
-                    {data2 && data2.length === 0 && (
+                    {!scheduleList && <>loading...</>}
+                    {scheduleList && scheduleList.length === 0 && (
                       <>
                         <div className="d-flex justify-content-center">
                           <div class="card mt-6">
@@ -99,9 +111,9 @@ const Homepage = () => {
                       </>
                     )}
                     <ul>
-                      {data2 &&
-                        data2.length !== 0 &&
-                        data2.schedules.map((schedule) => {
+                      {scheduleList &&
+                        scheduleList.length !== 0 &&
+                        scheduleList.map((schedule) => {
                           return (
                             <HomepageSchedule
                               key={schedule._id}

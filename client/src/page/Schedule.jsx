@@ -41,6 +41,14 @@ const DELETE_SCHEDULE = gql`
   }
 `;
 
+const DELETE_SUBJECT = gql`
+  mutation ($id: MongoID!) {
+    deleteSubjectById(_id: $id) {
+      recordId
+    }
+  }
+`;
+
 const DELETE_ALLSUBJECT = gql`
   mutation ($filter: FilterRemoveManySubjectInput!) {
     deleteSubjectAllById(filter: $filter) {
@@ -56,9 +64,10 @@ const Schedule = () => {
   console.log(typeof schedule_id);
   const navigate = useNavigate();
   const [deleteScheduleMutation] = useMutation(DELETE_SCHEDULE);
-  const [deleteSubjectMutation] = useMutation(DELETE_ALLSUBJECT);
+  const [deleteSubjectByIdMutation] = useMutation(DELETE_SUBJECT);
+  const [deleteSubjectAllMutation] = useMutation(DELETE_ALLSUBJECT);
 
-  const { loading, data } = useQuery(SCHEDULE_QUERY, {
+  const { loading, data, refetch } = useQuery(SCHEDULE_QUERY, {
     variables: { _id: schedule_id },
   });
 
@@ -72,7 +81,7 @@ const Schedule = () => {
       if (result.isConfirmed) {
         try {
           if (data.scheduleId.subjects.length !== 0) {
-            await deleteSubjectMutation({
+            await deleteSubjectAllMutation({
               variables: {
                 filter: {
                   scheduleId: schedule_id,
@@ -100,6 +109,19 @@ const Schedule = () => {
     });
   };
 
+  async function deleteSubjectById(subjectId) {
+    try {
+      await deleteSubjectByIdMutation({
+        variables: {
+          id: subjectId,
+        },
+      });
+      refetch();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   if (loading) return null;
 
   return (
@@ -112,16 +134,23 @@ const Schedule = () => {
         <Table striped bordered hover className="mt-5">
           <thead>
             <tr>
-              <th>Day</th>
-              <th>Subject</th>
-              <th>Time</th>
-              <th>Link</th>
+              <th style={{ textAlign: "center" }}>Day</th>
+              <th style={{ textAlign: "center" }}>Subject</th>
+              <th style={{ textAlign: "center" }}>Time</th>
+              <th style={{ textAlign: "center" }}>Link</th>
+              <th style={{ textAlign: "center" }}>Option</th>
             </tr>
           </thead>
           <tbody>
             {data.scheduleId.subjects &&
               data.scheduleId.subjects.map((subject) => {
-                return <Subject key={subject._id} subject={subject} />;
+                return (
+                  <Subject
+                    key={subject._id}
+                    subject={subject}
+                    deleteSubjectById={deleteSubjectById}
+                  />
+                );
               })}
           </tbody>
         </Table>
