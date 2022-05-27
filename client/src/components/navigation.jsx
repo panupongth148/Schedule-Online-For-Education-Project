@@ -3,6 +3,7 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "../plugins/axios";
+import Cookies from "js-cookie";
 import { gql, useQuery } from '@apollo/client';
 
 import HomePage from "../page/Homepage";
@@ -14,33 +15,35 @@ import Login from "../page/Login";
 import Register from "../page/Register";
 import Schedule from "../page/Schedule";
 
-const Navigation = (props) => {
-  const [user, setUser] = useState(null);
-
-  async function getUserByToken() {
-    const token = localStorage.getItem("token");
-    console.log(token);
-    if (token) {
-      console.log(token);
-      let response = await axios.get(`getuserbytoken`, {
-        params: {
-          token: token,
-        },
-      });
-      setUser(response.data);
+const ME_QUERY = gql`
+  query {
+    me {
+      _id
+      name
+      username
+      email
     }
   }
+`;
 
-  useEffect(() => {
-    // Update the document title using the browser API
-    getUserByToken();
-  }, []);
-
+const Navigation = () => {
+  const data = useQuery(ME_QUERY);
+  const [user, setUser] = useState(null)
+  
   const logout = () => {
-    localStorage.removeItem("token");
+    Cookies.remove("token");
     window.location.reload(false);
   };
+  
+  if (data.data) {
+    setUser(data.data.me);
+  }
   console.log(user);
+  
+  // useEffect(() => {
+  //   // Update the document title using the browser API
+  //   if (data.data) getUserByToken();
+  // }, []);
 
   return (
     <>
@@ -79,7 +82,7 @@ const Navigation = (props) => {
               {user && (
                 <Nav>
                   <Nav.Link style={{ color: "#FCF69C" }}>
-                    {user[0].name}
+                    {user.me.name}
                   </Nav.Link>
                   <Nav.Link
                     style={{ color: "#FCF69C" }}

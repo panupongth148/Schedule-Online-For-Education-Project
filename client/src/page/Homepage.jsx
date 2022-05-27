@@ -40,40 +40,40 @@ const Me = gql`
   }
 `;
 
-const Homepage = (props) => {
-  const [schedule_list, set_schedule_list] = useState(null);
-  const [user, setUser] = useState({ account_id: 0 });
-  const { data, error } = useQuery(Me);
+const SCHEDULE_QUERY = gql`
+  query {
+    schedules {
+      _id
+      title
+      userId
+      code
+    }
+  }
+`;
+
+const Homepage = () => {
+  const [user, setUser] = useState({account_id: 0});
+  const [schedules, setSchedules] = useState(null);
+
+  const me = useQuery(Me);
+  const schedule = useQuery(SCHEDULE_QUERY);
+
   const navigate = useNavigate();
-
-  // async function getScheduleList() {
-  //   console.log("schedule");
-  // }
-
-  async function getUserByToken() {
-    // const token = Cookies.get("token");
-    // console.log(token);
-
-    console.log(data);
-    console.log(error);
-
-    // if (token) {
-    //   console.log(token);
-    //   let response = await axios.get(`getuserbytoken`, {
-    //     params: {
-    //       token: token,
-    //     },
-    //   });
-    //   const us = response.data[0];
-    //   console.log(us);
-    //   setUser(us);
-    // }
+  
+  function getScheduleList() {
+    console.log(schedule.data.schedules);
+    setSchedules(schedule.data.schedules);
+  }
+  
+  function getUserByToken() {
+    console.log(me.data.me);
+    setUser(me.data.me._id);
   }
 
-  // useEffect(() => {
-  //   // Update the document title using the browser API
-  //   getScheduleList();
-  // }, [user]);
+  useEffect(() => {
+    // Update the document title using the browser API
+    getScheduleList();
+  }, [user]);
 
   useEffect(() => {
     getUserByToken();
@@ -95,8 +95,8 @@ const Homepage = (props) => {
                           <span>
                             <Badge bg="warning">
                               <FontAwesomeIcon icon={faCalendarPlus} />{" "}
-                              {!schedule_list && <>loading...</>}
-                              {schedule_list && <>{schedule_list.length}</>}
+                              {!schedule && <>loading...</>}
+                              {schedule && <>{schedules.length}</>}
                             </Badge>
                           </span>
                         </h1>
@@ -122,8 +122,8 @@ const Homepage = (props) => {
                         </ButtonGroup>
                       </Container>
                     </a>
-                    {!schedule_list && <>loading...</>}
-                    {schedule_list && schedule_list.length === 0 && (
+                    {!schedules && <>loading...</>}
+                    {schedules && schedules.length === 0 && (
                       <>
                         <div className="d-flex justify-content-center">
                           <div class="card mt-6">
@@ -137,11 +137,11 @@ const Homepage = (props) => {
                       </>
                     )}
                     <ul>
-                      {schedule_list &&
-                        schedule_list.map((schedule) => {
+                      {schedules &&
+                        schedules.map((schedule) => {
                           return (
                             <HomepageSchedule
-                              key={schedule.schedule_id}
+                              key={schedule._id}
                               schedule={schedule}
                             />
                           );
