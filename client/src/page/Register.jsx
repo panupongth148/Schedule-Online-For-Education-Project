@@ -4,15 +4,15 @@ import Footer from "../components/Footer";
 import "../assets/Styles.css";
 import itlogo from "../assets/picture/it-logo.png";
 import { FlexContainer, Box } from "../components/Components";
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation } from "@apollo/client";
 
 const REGISTER_MUTATION = gql`
   mutation ($record: CreateOneUserInput!) {
-    createUser(record : $record) {
+    createUser(record: $record) {
       recordId
     }
   }
-`
+`;
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -20,14 +20,17 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
-  
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
+
   const [registerMutation] = useMutation(REGISTER_MUTATION);
 
   const onSubmitRegister = useCallback(
-    async () => {
-      console.log(password === confirmPassword)
+    async (e) => {
+      e.preventDefault();
+      console.log(password === confirmPassword);
       if (password !== confirmPassword) {
-        alert("please check confirm password");
+        setError("password ไม่ตรงกัน");
       } else if (password === confirmPassword) {
         try {
           await registerMutation({
@@ -37,15 +40,18 @@ const Register = () => {
                 password,
                 name,
                 email,
-              }
-            }
+              },
+            },
           });
-          alert('register success');
+          setSuccess(true);
+          setError(null);
         } catch (err) {
+          setError(err.message);
           console.log(err.message);
         }
       }
-    }, [username, password, name, email, registerMutation, confirmPassword]
+    },
+    [username, password, name, email, registerMutation, confirmPassword]
   );
 
   return (
@@ -53,8 +59,18 @@ const Register = () => {
       <FlexContainer>
         <Box>
           <img id="logo" src={itlogo} alt="it-logo" />
-          <form class="box" id="formRegister">
+          <form class="box" id="formRegister" onSubmit={onSubmitRegister}>
             <h1 class="title has-text-centered">Register</h1>
+            {success && (
+              <div class="alert alert-primary" role="alert">
+                สมัครสมาชิกสำเร็จ <a href="/login">Login now!</a>
+              </div>
+            )}
+            {error && (
+              <div class="alert alert-danger" role="alert">
+                {error}
+              </div>
+            )}
             <div class="field">
               <label class="label">Name</label>
               <div class="control">
@@ -118,10 +134,7 @@ const Register = () => {
               </div>
             </div>
 
-            <button
-              class="button is-link is-fullwidth"
-              onClick={() => { onSubmitRegister(); console.log('submit'); }}
-            >
+            <button class="button is-link is-fullwidth" type="submit">
               Sign up
             </button>
           </form>

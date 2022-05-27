@@ -16,6 +16,7 @@ import axios from "../plugins/axios";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { ScheduleContainer, BoxSchedule } from "../components/Components";
 
 const MySwal = withReactContent(Swal);
 
@@ -71,6 +72,10 @@ const Schedule = () => {
     variables: { _id: schedule_id },
   });
 
+  useEffect(() => {
+    refetch();
+  }, []);
+
   const handleDeleteButton = async () => {
     await MySwal.fire({
       title: "ลบตาราง",
@@ -125,57 +130,61 @@ const Schedule = () => {
   if (loading) return null;
 
   return (
-    <div className="App">
-      <div className="container mt-5">
-        <h2>{schedule.title}</h2>
-        <p>
-          <b>Code:</b> {schedule.code}
-        </p>
-        <Table striped bordered hover className="mt-5">
-          <thead>
-            <tr>
-              <th style={{ textAlign: "center" }}>Day</th>
-              <th style={{ textAlign: "center" }}>Subject</th>
-              <th style={{ textAlign: "center" }}>Time</th>
-              <th style={{ textAlign: "center" }}>Link</th>
-              <th style={{ textAlign: "center" }}>Option</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.scheduleId.subjects &&
-              data.scheduleId.subjects.map((subject) => {
-                return (
-                  <Subject
-                    key={subject._id}
-                    subject={subject}
-                    deleteSubjectById={deleteSubjectById}
-                  />
-                );
-              })}
-          </tbody>
-        </Table>
-        <Button
-          variant="success"
-          style={{ width: "100%", marginBottom: "5px" }}
-        >
-          <Link
-            style={{ textDecorationLine: "none", color: "white" }}
-            to={`/AddSj`}
-            state={{ schedule: schedule }}
-          >
-            Add Subject
-          </Link>
-        </Button>
-        <Button
-          variant="danger"
-          style={{ width: "100%" }}
-          onClick={() => handleDeleteButton()}
-        >
-          Delete this schedule
-        </Button>
-      </div>
+    <>
+      <ScheduleContainer>
+        <BoxSchedule>
+          <div className="container">
+            <h2 className="mt-5">{schedule.title}</h2>
+            <p>
+              <b>Code:</b> {schedule.code}
+            </p>
+            <Table striped bordered hover className="mt-5">
+              <thead>
+                <tr>
+                  <th style={{ textAlign: "center" }}>Day</th>
+                  <th style={{ textAlign: "center" }}>Subject</th>
+                  <th style={{ textAlign: "center" }}>Time</th>
+                  <th style={{ textAlign: "center" }}>Link</th>
+                  <th style={{ textAlign: "center" }}>Option</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.scheduleId.subjects &&
+                  data.scheduleId.subjects.map((subject) => {
+                    return (
+                      <Subject
+                        key={subject._id}
+                        subject={subject}
+                        deleteSubjectById={deleteSubjectById}
+                      />
+                    );
+                  })}
+              </tbody>
+            </Table>
+            <Button
+              variant="success"
+              style={{ width: "100%", marginBottom: "5px" }}
+            >
+              <Link
+                style={{ textDecorationLine: "none", color: "white" }}
+                to={`/AddSj`}
+                state={{ schedule: schedule }}
+              >
+                Add Subject
+              </Link>
+            </Button>
+            <Button
+              variant="danger"
+              style={{ width: "100%" }}
+              onClick={() => handleDeleteButton()}
+            >
+              Delete this schedule
+            </Button>
+          </div>
+        </BoxSchedule>
+      </ScheduleContainer>
       <Footer />
-    </div>
+    </>
   );
 };
 
