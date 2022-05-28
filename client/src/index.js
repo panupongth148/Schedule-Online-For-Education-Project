@@ -14,7 +14,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:3001/graphql",
+  uri: "http://50.16.77.137:3001/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {

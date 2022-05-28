@@ -1,15 +1,11 @@
 import {
   Button,
   InputGroup,
-  FormControl,
-  Placeholder,
-  Dropdown,
-  Form,
-  Control,
+  FormControl
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "../components/Footer";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import React, { useCallback, useState } from "react";
 import Select from "react-select";
 import { gql, useMutation } from "@apollo/client";
@@ -71,19 +67,8 @@ const AddSubject = () => {
   const [subjectTime, setSubjectTime] = useState("");
   const [subjectLink, setSubjectLink] = useState("");
 
-  console.log("id: " + scheduleId);
-
   const submitSubjectInfo = useCallback(async () => {
     if (subjectName && subjectTime && subjectLink && day) {
-      // let requestSubject = {
-      //   subject_name: subjectName,
-      //   period: subjectTime,
-      //   date: day,
-      //   link: subjectLink,
-      //   schedule_id: scheduleId,
-      // };
-      // console.log(requestSubject);
-
       try {
         await createSubjectMutation({
           variables: {
@@ -196,13 +181,7 @@ const AddSubject = () => {
                   }}
                   onClick={submitSubjectInfo}
                 >
-                  {/* <Link
-                    style={{ textDecorationLine: "none", color: "white" }}
-                    to={{ pathname: `/Schedule` }}
-                    state={{ schedule: schedule }}
-                  > */}
                   Add
-                  {/* </Link> */}
                 </Button>
               </div>
             </Container>

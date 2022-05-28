@@ -1,10 +1,10 @@
-import { Button, InputGroup, FormControl, Placeholder } from "react-bootstrap";
+import { Button, InputGroup, FormControl } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Footer from "../components/Footer";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useCallback } from "react";
 import styled from "styled-components";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -41,7 +41,6 @@ const Container = styled.div`
 `;
 
 const AddSchedule = () => {
-  const [subjects, setSubject] = useState(null);
   const [code, setCode] = useState("");
   const [addSchedule] = useMutation(ADDSCHEDULE_MUTATION);
   const [error, setError] = useState(null);
@@ -75,25 +74,7 @@ const AddSchedule = () => {
     },
     [code, id, addSchedule]
   );
-  // const summitCode = async () => {
 
-  //   // let response = await axios.post(`/schedule/bycode`, {
-  //   //   code: code,
-  //   //   account_id: 3,
-  //   // });
-  //   // let subjectRes = response.data;
-  //   // console.log(subjectRes);
-  //   // let idSchedule = subjectRes[0].schedule_id;
-  //   // let response2 = await axios.post("/addschedule", {
-  //   //   s_name: subjectRes[0].s_name,
-  //   //   account_id: 1,
-  //   // });
-
-  //   // let response3 = await axios.post("/schedule/subjectlist", {
-  //   //   subjects: subjectRes,
-  //   //   scheduleId: response2.data.sehedule_id,
-  //   // });
-  // };
   return (
     <>
       <Background>

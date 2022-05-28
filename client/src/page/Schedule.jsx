@@ -1,14 +1,9 @@
 import {
   Button,
-  ModalHeader,
-  ModalBody,
-  ModalDialog,
-  ModalFooter,
   Table,
-  ModalTitle,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Subject from "./../components/Subject";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";

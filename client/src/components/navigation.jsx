@@ -1,7 +1,6 @@
 import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { gql, useQuery } from "@apollo/client";
 
@@ -25,7 +24,7 @@ const ME_QUERY = gql`
 `;
 
 const Navigation = () => {
-  const { loading, data } = useQuery(ME_QUERY);
+  const { data } = useQuery(ME_QUERY);
 
   const logout = () => {
     Cookies.remove("token");

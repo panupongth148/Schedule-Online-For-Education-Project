@@ -1,7 +1,7 @@
-import { Button, InputGroup, FormControl, Placeholder } from "react-bootstrap";
+import { Button, InputGroup, FormControl } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styled from "styled-components";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 import { GenerateCode } from "../plugins/GenerateCode";
 import React, { useState } from "react";
@@ -44,7 +44,6 @@ const CREATE_SCHEDULE = gql`
 const CreateSchedule = () => {
   const [schedule, setSchedule] = useState(null);
   const [createScheduleMutation] = useMutation(CREATE_SCHEDULE);
-  // const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const id = useLocation().state.id;
   let navigate = useNavigate();
@@ -53,6 +52,7 @@ const CreateSchedule = () => {
   function handleChange(event) {
     setSchedule(event.target.value);
   }
+
   const createSchedule = async () => {
     try {
       const createSchedule = await createScheduleMutation({
@@ -65,7 +65,6 @@ const CreateSchedule = () => {
         },
       });
       if (createSchedule) {
-        // setSuccess(true);
         await MySwal.fire({
           title: "เพิ่มตารางสำเร็จ!",
         });
@@ -93,11 +92,6 @@ const CreateSchedule = () => {
         >
           <FlexContainer>
             <Container>
-              {/* {success && (
-                <div class="alert alert-primary" role="alert">
-                  เพิ่มตารางเวลาใหม่สำเร็จ!
-                </div>
-              )} */}
               {error && (
                 <div class="alert alert-danger" role="alert">
                   กรุณากรอกชื่อตารางด้วยค่ะ!
@@ -127,7 +121,6 @@ const CreateSchedule = () => {
                   }}
                   onClick={createSchedule}
                 >
-                  {/* <Link style={{  textDecorationLine: "none", color: "white"}} to={{pathname:`/Createsc2`}} state={{ scheduleName: schedule, scheduleId: scheduleId }}>Add</Link> */}
                   Add
                 </Button>
               </div>
