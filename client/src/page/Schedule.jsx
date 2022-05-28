@@ -3,7 +3,7 @@ import {
   Table,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Subject from "./../components/Subject";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
@@ -52,15 +52,30 @@ const DELETE_ALLSUBJECT = gql`
   }
 `;
 
+const UPDATE_NAME_SCHEDULE =  gql`
+mutation ($id:MongoID!,  $record: UpdateByIdScheduleInput!){
+  updateSchedule(_id: $id, record: $record){
+    recordId,
+    record{
+      title
+    }
+  }
+}
+`
+
+
 const Schedule = () => {
   const location = useLocation();
   const { schedule } = location.state;
   const schedule_id = schedule._id;
+  const [editTitle, setEditTitle] = useState(true)
+  const [nameScEdit, setNameScEdit] = useState(schedule.title)
   const navigate = useNavigate();
 
   const [deleteScheduleMutation] = useMutation(DELETE_SCHEDULE);
   const [deleteSubjectByIdMutation] = useMutation(DELETE_SUBJECT);
   const [deleteSubjectAllMutation] = useMutation(DELETE_ALLSUBJECT);
+  const [updateScheduleMutation] = useMutation(UPDATE_NAME_SCHEDULE);
 
   const { loading, data, refetch } = useQuery(SCHEDULE_QUERY, {
     variables: { _id: schedule_id },
@@ -69,7 +84,23 @@ const Schedule = () => {
   useEffect(() => {
     refetch();
   }, []);
-
+  const saveEditSc = async (e) =>{
+    try{
+      await updateScheduleMutation({
+        variables: {
+          id: schedule_id,
+          record:{
+            title: nameScEdit,
+            code : schedule.code,
+            userId: schedule.userId
+          }
+        }        
+      })
+    }catch(err){
+      console.log(err)
+    }
+    setEditTitle(true)
+  }
   const handleDeleteButton = async () => {
     await MySwal.fire({
       title: "ลบตาราง",
@@ -128,7 +159,35 @@ const Schedule = () => {
       <ScheduleContainer>
         <BoxSchedule>
           <div className="container">
-            <h2 className="mt-5">{schedule.title}</h2>
+          {editTitle && (
+            <div className="row">
+              <div className="col-2"></div>
+              <div className="col-8">
+            <h2 className="mt-5">{nameScEdit}</h2>
+            </div>
+            <div className="col-2">
+              <button className="btn-primary mt-5" onClick={(e) =>{setEditTitle(false)}}>แก้ไข</button>
+            </div>
+            </div>
+            )}
+            {!editTitle && (
+              <div className="row">
+              <div className="col-2"></div>
+              <div className="col-8 mt-5">
+            {/* <h2 className="mt-5">{schedule.title}</h2> */}
+            <input
+                  class="input"
+                  type="text"
+                  placeholder=""
+                  value={nameScEdit}
+                  onChange={(e) => setNameScEdit(e.target.value)}
+                />
+            </div>
+            <div className="col-2">
+              <button className="btn-primary mt-5" onClick={saveEditSc}>บันทึก</button>
+            </div>
+            </div>
+            )}
             <p>
               <b>Code:</b> {schedule.code}
             </p>
